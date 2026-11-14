@@ -43,3 +43,8 @@ a:focus-visible,button:focus-visible{outline:2px solid #39e7ff;outline-offset:3p
 .main-area a:not(.button):not(.base-card):not(.feature-card):hover{color:#d4fbff;text-decoration-color:#8cf3ff;text-shadow:0 0 13px #39e7ff55}
 .main-area a.button,.main-area a.base-card,.main-area a.feature-card{text-decoration:none}
 .sidebar a{text-decoration:none}
+
+/* PWA Installationsknopf */
+.install-button{white-space:nowrap;min-height:38px;padding:9px 12px;font-size:10px}
+.install-button[hidden]{display:none}
+@media(max-width:760px){.topbar{flex-wrap:wrap}.install-button{margin-left:auto}.profile{display:none}}
