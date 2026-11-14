@@ -1,10 +1,44 @@
 <!doctype html>
-<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>FlohWorldControl</title><link rel="stylesheet" href="style.css"><script src="https://cdn.jsdelivr.net/npm/chart.js"></script></head>
-<body><aside class="sidebar"><div class="brand"><span class="mark">F</span><div><b>FlohWorld</b><small>CONTROL CENTER</small></div></div><nav><a class="active" href="#overview">◈ Übersicht</a><a href="#farms">⚙ Farmen</a><a href="#bases">▦ Basen & Welten</a><a href="#storage">▣ Kistensuche</a><a href="#teleport">⌖ Teleport</a><a href="#statistics">⌁ Statistiken</a></nav><div class="connection"><i></i><div><b>Server-Verbindung</b><small>Demo-Modus · nicht verbunden</small></div></div></aside>
-<main><header><div><p class="eyebrow">MINECRAFT WORLD MANAGEMENT</p><h1>Übersicht</h1></div><div class="profile">F&nbsp; Floh</div></header><div class="notice">Vorschau-Modus: Beispieldaten. Noch keine echten Serveraktionen.</div>
-<section class="stats"><article><small>VERWALTETE BASEN</small><strong>3</strong><span>über 2 Welten</span></article><article><small>FARMEN GESAMT</small><strong>8</strong><span>5 aktiv · 3 pausiert</span></article><article><small>ERTRAG HEUTE</small><strong>2.480</strong><span class="good">Items · +12,4 %</span></article><article><small>VERBRAUCH HEUTE</small><strong>640</strong><span>Items</span></article></section>
-<section class="grid"><article class="panel wide" id="farms"><div class="head"><div><p class="eyebrow">AUTOMATION</p><h2>Farm-Übersicht</h2></div><button id="addFarm">+ Farm hinzufügen</button></div><div id="farmList" class="farms"></div></article>
-<article class="panel" id="statistics"><p class="eyebrow">RESSOURCEN</p><h2>Ertrag & Verbrauch</h2><canvas id="yieldChart"></canvas></article>
-<article class="panel" id="bases"><p class="eyebrow">STRUKTUR</p><h2>Basen & Welten</h2><details open><summary>🌍 Survival-Welt</summary><p>⌂ Hauptbase · 4 Farmen</p><p>⌂ Holz-Außenposten · 2 Farmen</p></details><details><summary>🌍 Kreativ</summary><p>⌂ Testbasis · 2 Farmen</p></details></article>
-<article class="panel" id="storage"><p class="eyebrow">INVENTAR</p><h2>Kistensuche</h2><div class="search"><input id="itemSearch" placeholder="Item suchen, z. B. Diamant"><button id="searchButton">Suchen</button></div><p id="searchResult" class="muted">Live-Suche folgt mit Plugin-Verbindung.</p></article>
-<article class="panel" id="teleport"><p class="eyebrow">NAVIGATION</p><h2>Teleport</h2><div class="search"><input id="teleportTarget" placeholder="Spieler, Base oder Farm"><button id="teleportButton">Ziel</button></div><p id="teleportResult" class="muted">Teleport wird nach Login und Verbindung aktiviert.</p></article></section><footer>FlohWorldControl · sichere Server-Verbindung folgt in Phase 2</footer></main><script src="app.js"></script></body></html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0c1017">
+  <title>FlohWorldControl</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <span class="mark">F</span>
+        <div><b>FlohWorld</b><small>CONTROL CENTER</small></div>
+      </div>
+      <nav class="main-nav" aria-label="Hauptnavigation">
+        <a href="#overview" data-route="overview"><span>◈</span> Übersicht</a>
+        <a href="#farms" data-route="farms"><span>⚙</span> Farmen</a>
+        <a href="#bases" data-route="bases"><span>▦</span> Basen</a>
+        <a href="#worlds" data-route="worlds"><span>🌍</span> Welten</a>
+        <a href="#storage" data-route="storage"><span>▣</span> Kistensuche</a>
+        <a href="#teleport" data-route="teleport"><span>⌖</span> Teleport</a>
+        <a href="#statistics" data-route="statistics"><span>⌁</span> Statistiken</a>
+      </nav>
+      <div class="sidebar-subnav" id="sidebarSubnav"></div>
+      <div class="connection"><i></i><div><b>Server-Verbindung</b><small>Demo-Modus · nicht verbunden</small></div></div>
+    </aside>
+
+    <div class="main-area">
+      <header class="topbar">
+        <button class="menu-button" id="menuButton" aria-label="Menü öffnen" aria-expanded="false">☰</button>
+        <div class="page-heading"><p class="eyebrow">MINECRAFT WORLD MANAGEMENT</p><h1 id="pageTitle">Übersicht</h1></div>
+        <div class="profile"><span class="profile-mark">F</span> Floh</div>
+      </header>
+      <main id="pageContent"></main>
+      <footer>FlohWorldControl · sichere Server-Verbindung folgt in Phase 2</footer>
+    </div>
+  </div>
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+  <script src="app.js"></script>
+</body>
+</html>
