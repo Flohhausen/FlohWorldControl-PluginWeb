@@ -40,6 +40,8 @@ public final class FlohWorldControlPlugin extends JavaPlugin {
     }
 
     @Override public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+        if (cmd.getName().equalsIgnoreCase("floh")) return handleFloh(sender, args);
+
         if (!sender.hasPermission("flohworldcontrol.admin")) {
             sender.sendMessage("§cKeine Berechtigung."); return true;
         }
@@ -101,6 +103,81 @@ public final class FlohWorldControlPlugin extends JavaPlugin {
             default -> sender.sendMessage("§cUnbekannte Aktion.");
         }
         return true;
+    }
+
+
+    private boolean handleFloh(CommandSender sender, String[] args) {
+        if (!sender.hasPermission("flohworldcontrol.admin") && !(sender instanceof BlockCommandSender)) {
+            sender.sendMessage("§cKeine Berechtigung."); return true;
+        }
+        if (args.length >= 3 && args[0].equalsIgnoreCase("tp")) {
+            String action = args[1].toLowerCase(Locale.ROOT);
+            if (action.equals("next")) {
+                if (!(sender instanceof BlockCommandSender blockSender)) {
+                    sender.sendMessage("§cDieser Befehl ist nur für den vorbereiteten Commandblock."); return true;
+                }
+                String name = cleanName(args[2]);
+                String path = "teleports." + name;
+                if (!data.contains(path + ".world")) return true;
+                World world = Bukkit.getWorld(data.getString(path + ".world"));
+                if (world == null) return true;
+                Location target = new Location(world, data.getDouble(path + ".x"), data.getDouble(path + ".y"),
+                    data.getDouble(path + ".z"), (float)data.getDouble(path + ".yaw"), (float)data.getDouble(path + ".pitch"));
+                Location source = blockSender.getBlock().getLocation();
+                Player nearest = Bukkit.getOnlinePlayers().stream()
+                    .filter(player -> player.getWorld().equals(source.getWorld()))
+                    .min((a, b) -> Double.compare(a.getLocation().distanceSquared(source), b.getLocation().distanceSquared(source)))
+                    .orElse(null);
+                if (nearest != null) nearest.teleport(target);
+                return true;
+            }
+            if (action.equals("punkt") && args.length == 3 && args[2].equalsIgnoreCase("list")) {
+                ConfigurationSection points = data.getConfigurationSection("teleports");
+                if (points == null || points.getKeys(false).isEmpty()) sender.sendMessage("§7Keine Teleportpunkte gespeichert.");
+                else sender.sendMessage("§eTeleportpunkte: §f" + String.join("§7, §f", points.getKeys(false)));
+                return true;
+            }
+            if (action.equals("punkt") && args.length == 3) {
+                if (!(sender instanceof Player player)) { sender.sendMessage("§cNur im Spiel."); return true; }
+                String name = cleanName(args[2]);
+                if (name.isBlank()) { sender.sendMessage("§cUngültiger Name."); return true; }
+                Location loc = player.getLocation();
+                String path = "teleports." + name;
+                data.set(path + ".world", loc.getWorld().getName());
+                data.set(path + ".x", loc.getX()); data.set(path + ".y", loc.getY()); data.set(path + ".z", loc.getZ());
+                data.set(path + ".yaw", loc.getYaw()); data.set(path + ".pitch", loc.getPitch());
+                saveData(); sender.sendMessage("§aTeleportpunkt §e" + name + " §agespeichert.");
+                return true;
+            }
+            if (action.equals("block") && args.length == 3) {
+                if (!(sender instanceof Player player)) { sender.sendMessage("§cNur im Spiel."); return true; }
+                String name = cleanName(args[2]);
+                if (!data.contains("teleports." + name + ".world")) { sender.sendMessage("§cTeleportpunkt nicht gefunden."); return true; }
+                org.bukkit.inventory.ItemStack item = new org.bukkit.inventory.ItemStack(Material.COMMAND_BLOCK);
+                org.bukkit.inventory.meta.ItemMeta rawMeta = item.getItemMeta();
+                if (!(rawMeta instanceof org.bukkit.inventory.meta.BlockStateMeta meta)) {
+                    sender.sendMessage("§cDieser Server unterstützt keine vorbereiteten Commandblock-Items."); return true;
+                }
+                org.bukkit.block.BlockState state = meta.getBlockState();
+                if (!(state instanceof org.bukkit.block.CommandBlock commandBlock)) {
+                    sender.sendMessage("§cCommandblock-Blockzustand nicht verfügbar."); return true;
+                }
+                commandBlock.setCommand("floh tp next " + name);
+                meta.setBlockState(commandBlock);
+                meta.setDisplayName("§6Teleport-Commandblock: §e" + name);
+                meta.setLore(java.util.List.of("§7Teleportiert den nächstgelegenen", "§7Spieler zum gespeicherten Punkt."));
+                item.setItemMeta(meta);
+                player.getInventory().addItem(item).values().forEach(drop -> player.getWorld().dropItemNaturally(player.getLocation(), drop));
+                sender.sendMessage("§aVorbereiteter Commandblock für §e" + name + " §aerhalten.");
+                return true;
+            }
+        }
+        sender.sendMessage("§e/Floh tp punkt <name|list> §7| §e/Floh tp block <name>");
+        return true;
+    }
+
+    private String cleanName(String value) {
+        return value.toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9_-]", "");
     }
 
     private void schedule(String name) {
