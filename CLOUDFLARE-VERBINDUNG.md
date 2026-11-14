@@ -1,6 +1,6 @@
 # FlohWorldControl – Cloudflare-Verbindung
 
-Diese Anleitung richtet die vorhandene Worker/API-Verbindung ein. Der Server
+Diese Anleitung richtet die Worker/API-Verbindung ein. Das Dashboard startet ohne vorgefuellte Demo-Basen oder Demo-Farmen. Der Server
 sendet alle 30 Sekunden einen Status-Snapshot per HTTPS an Cloudflare. Die
 Website liest diesen Status ueber `/api/state`.
 
@@ -47,14 +47,9 @@ Im Repository-Root:
 npx wrangler deploy
 ```
 
-Die ausgegebene Worker-Adresse notieren. Im Projekt wurde bisher diese Adresse
-verwendet:
-
-`https://flohworldcontrol-pluginweb.flohly89.workers.dev`
-
-Nur verwenden, wenn sie im Cloudflare Dashboard als aktuelle Worker-Adresse
-angezeigt wird. Nach Deploy pruefen, dass die Website unter dieser Adresse
-geladen wird.
+Die ausgegebene Worker-Adresse im Cloudflare-Dashboard notieren. Verwende
+keine alte oder angenommene Adresse. Nach dem Deploy pruefen, dass die Website
+unter genau dieser Adresse geladen wird.
 
 ## 5. Paper-Plugin konfigurieren
 Paper-Server einmal starten, damit die Plugin-Konfiguration angelegt wird,
