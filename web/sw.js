@@ -11,6 +11,8 @@ self.addEventListener("fetch",event=>{
   if(request.method!=="GET")return;
   const url=new URL(request.url);
   if(url.origin!==self.location.origin)return;
+  // API-Antworten mit Serverdaten oder Authentifizierung niemals cachen.
+  if(url.pathname.startsWith("/api/")){event.respondWith(fetch(request));return;}
   if(request.mode==="navigate"){
     event.respondWith(fetch(request).then(response=>{
       const copy=response.clone();caches.open(CACHE_NAME).then(cache=>cache.put("./index.html",copy));return response;
