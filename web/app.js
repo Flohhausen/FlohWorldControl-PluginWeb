@@ -37,6 +37,7 @@ function bind(){ $("#addBase")?.addEventListener("click",addBase);$("#treeAddBas
 function render(){const r=route(),section=titles[r.section]?r.section:"overview";$("#pageTitle").textContent=section==="bases"&&r.id?(data.bases.find(b=>b.id===r.id)?.name||"Base"):titles[section];$$(".main-nav a").forEach(a=>a.classList.toggle("active",a.dataset.route===section));baseTree();const html=section==="overview"?overview():section==="bases"?(r.id?baseDetail(r.id,r.category):basesPage()):section==="teleport"?teleportPage():pluginPage();const host=$("#pageContent");host.classList.remove("page-enter");host.innerHTML=html;if(section==="overview"){host.insertAdjacentHTML("afterbegin",cloudPanelHtml());bindCloudPanel();refreshCloudStatus();}requestAnimationFrame(()=>host.classList.add("page-enter"));bind();closeMenu();}
 function init(){$("#menuButton").addEventListener("click",menu);$("#sidebarBackdrop").addEventListener("click",closeMenu);$$(".main-nav a").forEach(a=>a.addEventListener("click",closeMenu));addEventListener("hashchange",render);if(!location.hash)location.hash="#overview";render();}
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init);else init();
+if(!window.__fwcCloudRefreshTimer){window.__fwcCloudRefreshTimer=window.setInterval(()=>{if(document.querySelector("#cloudState"))refreshCloudStatus();},30000);}
 
 
 // PWA-Installation: Android/Chromium direkt, iOS mit Safari-Anleitung.
