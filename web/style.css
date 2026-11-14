@@ -58,3 +58,16 @@
 .tree-child.active{background:#25384c;color:#ffd18b}
 @media(max-width:900px){.monitor-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:560px){.manage-row{align-items:flex-start;flex-direction:column}.manage-actions{justify-content:flex-start}.monitor-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* Eigene Konfigurationsseiten */
+.editor-panel{margin-top:14px}
+.back-link{display:inline-block;color:#f3bd69;text-decoration:none;font-size:11px;margin-bottom:20px}
+.editor-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.editor-field{display:grid;gap:7px;color:#aebed0;font-size:11px}
+.editor-field input{width:100%;background:#0b131e;border:1px solid #30445c;border-radius:8px;padding:11px 12px;color:#f4f7fb;font:inherit;outline:none}
+.editor-field input:focus{border-color:#e9a13b;box-shadow:0 0 0 3px #e9a13b20}
+.editor-toggle{display:flex;align-items:center;gap:10px;padding:12px 14px;background:#0d1925;border:1px solid #30445c;border-radius:9px;color:#e9eff7;font-size:11px}
+.editor-toggle input{width:17px;height:17px;accent-color:#e9a13b}
+.editor-help{grid-column:1/-1;color:#9aabc0;font-size:10px;line-height:1.6;margin:0}
+.editor-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:20px;padding-top:16px;border-top:1px solid #293b50}
+@media(max-width:620px){.editor-grid{grid-template-columns:1fr}}
