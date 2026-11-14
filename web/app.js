@@ -34,7 +34,7 @@ function editEntry(cat,id,base){const key={farms:"farms",switches:"switches",tel
 function deleteEntry(cat,id){const key={farms:"farms",switches:"switches",teleports:"teleports",items:"items"}[cat];const x=data[key]?.find(v=>v.id===id);if(!x||!confirm('"'+x.name+'" wirklich löschen?'))return;data[key]=data[key].filter(v=>v.id!==id);save();render();}
 function saveEditor(form){const cat=form.dataset.cat,base=form.dataset.base,id=form.dataset.id,key={farms:"farms",switches:"switches",teleports:"teleports",items:"items"}[cat];if(!key)return;const fd=new FormData(form);const name=String(fd.get("name")||"").trim();if(!name){alert("Bitte einen Namen eingeben.");return;}let x=id==="new"?null:data[key].find(v=>v.id===id);if(!x){x={id:slug(name)+"-"+Date.now().toString().slice(-4),base};data[key].push(x);}x.name=name;x.base=base;if(cat==="farms"){x.interval=Math.max(1,Number(fd.get("interval"))||10);x.pulse=Math.max(1,Number(fd.get("pulse"))||4);x.trigger=String(fd.get("trigger")||"").trim();x.output=String(fd.get("output")||"").trim();x.active=fd.has("active");}if(cat==="switches"){x.status=String(fd.get("status")||"Bereit");x.compassName=String(fd.get("compassName")||"");x.position=String(fd.get("position")||"");x.enabled=fd.has("enabled");}if(cat==="teleports"){x.world=String(fd.get("world")||"Survival");x.description=String(fd.get("description")||"");x.position=String(fd.get("position")||"");}if(cat==="items")x.chests=Math.max(0,Number(fd.get("chests"))||0);save();location.hash="bases/"+encodeURIComponent(base)+"/"+cat;}
 function bind(){ $("#addBase")?.addEventListener("click",addBase);$("#treeAddBase")?.addEventListener("click",addBase);$("[data-open-new]").forEach(b=>b.addEventListener("click",()=>{location.hash="bases/"+encodeURIComponent(b.dataset.base)+"/"+b.dataset.openNew+"/new";}));$("#entryEditor")?.addEventListener("submit",e=>{e.preventDefault();saveEditor(e.currentTarget);});$$("[data-edit]").forEach(b=>b.addEventListener("click",()=>editEntry(b.dataset.edit,b.dataset.id)));$$("[data-delete]").forEach(b=>b.addEventListener("click",()=>deleteEntry(b.dataset.delete,b.dataset.id)));$("#addGlobalTp")?.addEventListener("click",()=>editEntry("teleports",null,null));}
-function render(){const r=route(),section=titles[r.section]?r.section:"overview";$("#pageTitle").textContent=section==="bases"&&r.id?(data.bases.find(b=>b.id===r.id)?.name||"Base"):titles[section];$$(".main-nav a").forEach(a=>a.classList.toggle("active",a.dataset.route===section));baseTree();const html=section==="overview"?overview():section==="bases"?(r.id?baseDetail(r.id,r.category):basesPage()):section==="teleport"?teleportPage():pluginPage();const host=$("#pageContent");host.classList.remove("page-enter");host.innerHTML=html;requestAnimationFrame(()=>host.classList.add("page-enter"));bind();closeMenu();}
+function render(){const r=route(),section=titles[r.section]?r.section:"overview";$("#pageTitle").textContent=section==="bases"&&r.id?(data.bases.find(b=>b.id===r.id)?.name||"Base"):titles[section];$$(".main-nav a").forEach(a=>a.classList.toggle("active",a.dataset.route===section));baseTree();const html=section==="overview"?overview():section==="bases"?(r.id?baseDetail(r.id,r.category):basesPage()):section==="teleport"?teleportPage():pluginPage();const host=$("#pageContent");host.classList.remove("page-enter");host.innerHTML=html;if(section==="overview"){host.insertAdjacentHTML("afterbegin",cloudPanelHtml());bindCloudPanel();refreshCloudStatus();}requestAnimationFrame(()=>host.classList.add("page-enter"));bind();closeMenu();}
 function init(){$("#menuButton").addEventListener("click",menu);$("#sidebarBackdrop").addEventListener("click",closeMenu);$$(".main-nav a").forEach(a=>a.addEventListener("click",closeMenu));addEventListener("hashchange",render);if(!location.hash)location.hash="#overview";render();}
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init);else init();
 
@@ -80,3 +80,50 @@ if("serviceWorker" in navigator && location.protocol!=="file:"){
   window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(error=>console.warn("PWA-Offlinecache konnte nicht gestartet werden:",error)));
 }
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",setupPwaInstall);else setupPwaInstall();
+
+
+function cloudPanelHtml(){
+  return '<section class="panel cloud-panel"><div class="panel-head"><div><p class="eyebrow-panel">LIVE SERVER LINK</p><h2>Server-Verbindung</h2></div><span id="cloudState" class="cloud-state">Nicht verbunden</span></div><p id="cloudDetails" class="muted">Verbinde das Dashboard mit deinem Paper-Server, um echte Statusdaten zu sehen.</p><div class="cloud-actions"><button id="cloudConnect">Zugangsschlüssel eingeben</button><button id="cloudRefresh" class="secondary">Aktualisieren</button><button id="cloudDisconnect" class="secondary">Trennen</button></div><div id="cloudStats" class="cloud-stats"></div></section>';
+}
+function bindCloudPanel(){
+  document.querySelector("#cloudConnect")?.addEventListener("click",()=>{
+    const token=prompt("Dashboard-Zugangsschlüssel (ADMIN_TOKEN) eingeben:");
+    if(!token)return;
+    sessionStorage.setItem("fwc-admin-token",token.trim());
+    refreshCloudStatus();
+  });
+  document.querySelector("#cloudRefresh")?.addEventListener("click",refreshCloudStatus);
+  document.querySelector("#cloudDisconnect")?.addEventListener("click",()=>{
+    sessionStorage.removeItem("fwc-admin-token");
+    const state=document.querySelector("#cloudState");
+    if(state)state.textContent="Getrennt";
+    const details=document.querySelector("#cloudDetails");
+    if(details)details.textContent="Der Zugangsschlüssel wurde aus dieser Browser-Sitzung entfernt.";
+    const stats=document.querySelector("#cloudStats");if(stats)stats.replaceChildren();
+  });
+}
+async function refreshCloudStatus(){
+  const token=sessionStorage.getItem("fwc-admin-token");
+  const state=document.querySelector("#cloudState");
+  const details=document.querySelector("#cloudDetails");
+  const stats=document.querySelector("#cloudStats");
+  if(!state||!details||!stats)return;
+  if(!token){state.textContent="Nicht verbunden";details.textContent="Gib deinen ADMIN_TOKEN ein. Der Schlüssel bleibt nur in dieser Browser-Sitzung.";return;}
+  state.textContent="Verbinde …";
+  try{
+    const response=await fetch("/api/state",{headers:{Authorization:"Bearer "+token},cache:"no-store"});
+    if(response.status===401)throw new Error("Zugangsschlüssel ungültig.");
+    if(!response.ok)throw new Error("Cloud-API antwortet mit HTTP "+response.status+".");
+    const result=await response.json();
+    if(!result.connected||!result.snapshot){state.textContent="Warte auf Server";details.textContent="Cloudflare ist erreichbar, aber der Minecraft-Server hat noch keinen Status gesendet.";stats.replaceChildren();return;}
+    const snap=result.snapshot,server=snap.server||{};
+    const age=Math.max(0,Math.floor((Date.now()-(snap.timestamp||result.updatedAt||Date.now()))/1000));
+    state.textContent=age<90?"Server online":"Letzter Kontakt vor "+Math.floor(age/60)+" min";
+    details.textContent=(server.name||"Minecraft-Server")+" · "+(server.version||"Version unbekannt")+" · "+(server.online??0)+"/"+(server.maxPlayers??"?")+" Spieler online";
+    stats.innerHTML='<div><small>SPIELER ONLINE</small><b>'+Number(server.online||0)+'</b></div><div><small>FARMEN</small><b>'+(Array.isArray(snap.farms)?snap.farms.length:0)+'</b></div><div><small>WELTEN</small><b>'+Number(snap.worlds||0)+'</b></div>';
+  }catch(error){
+    state.textContent="Verbindung fehlgeschlagen";
+    details.textContent=error.message;
+    stats.replaceChildren();
+  }
+}
