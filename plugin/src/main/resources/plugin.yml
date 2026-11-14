@@ -5,6 +5,9 @@ api-version: '1.21'
 author: Flohhausen
 description: Verwaltung von Basen und automatisierten Farmen.
 commands:
+  floh:
+    description: FlohWorldControl Hauptbefehl.
+    usage: /Floh tp <punkt|block> <name>
   base:
     description: Verwaltet Basen und Farmen.
     usage: /base farm <create|trigger|output|interval|pulse|enable|disable|list>
