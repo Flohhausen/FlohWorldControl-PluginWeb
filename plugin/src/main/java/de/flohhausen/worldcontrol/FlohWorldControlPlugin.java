@@ -18,18 +18,11 @@ import java.io.IOException;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.time.Duration;
-import java.util.stream.Collectors;
 
 public final class FlohWorldControlPlugin extends JavaPlugin {
     private final Map<String, BukkitTask> tasks = new ConcurrentHashMap<>();
     private File dataFile;
     private YamlConfiguration data;
-    private final HttpClient http = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build();
 
     @Override public void onEnable() {
         saveDefaultConfig();
@@ -39,8 +32,6 @@ public final class FlohWorldControlPlugin extends JavaPlugin {
         if (root != null) for (String name : root.getKeys(false))
             if (data.getBoolean("farms." + name + ".enabled")) schedule(name);
         getLogger().info("FlohWorldControl ist gestartet.");
-        // Snapshot auf dem Hauptthread erstellen; HTTP wird asynchron gesendet.
-        Bukkit.getScheduler().runTaskTimer(this, this::sendServerSnapshot, 40L, 600L);
     }
 
     @Override public void onDisable() {
@@ -220,51 +211,6 @@ public final class FlohWorldControlPlugin extends JavaPlugin {
         data.set(p + ".last-run", System.currentTimeMillis());
         saveData();
     }
-    private void sendServerSnapshot() {
-        String endpoint = getConfig().getString("connection.worker-url", "").trim();
-        String token = getConfig().getString("connection.server-token", "").trim();
-        if (endpoint.isEmpty() || token.isEmpty()) return;
-        String players = Bukkit.getOnlinePlayers().stream()
-            .map(Player::getName).map(this::jsonEscape)
-            .map(n -> "\"" + n + "\"").collect(Collectors.joining(","));
-        String farms = data.getConfigurationSection("farms") == null ? "" :
-            data.getConfigurationSection("farms").getKeys(false).stream().map(name -> {
-                String p = "farms." + name;
-                return "{\"name\":\"" + jsonEscape(name) + "\",\"enabled\":" +
-                    data.getBoolean(p + ".enabled") + ",\"intervalMinutes\":" +
-                    data.getLong(p + ".interval-minutes", 10) + ",\"lastRun\":" +
-                    data.getLong(p + ".last-run", 0) + "}";
-            }).collect(Collectors.joining(","));
-        String body = "{\"server\":{\"name\":\"" + jsonEscape(Bukkit.getServer().getName()) +
-            "\",\"version\":\"" + jsonEscape(Bukkit.getVersion()) +
-            "\",\"online\":" + Bukkit.getOnlinePlayers().size() +
-            ",\"maxPlayers\":" + Bukkit.getMaxPlayers() +
-            ",\"players\":[" + players + "]},\"farms\":[" + farms +
-            "],\"worlds\":" + Bukkit.getWorlds().size() +
-            ",\"timestamp\":" + System.currentTimeMillis() + "}";
-        try {
-            HttpRequest request = HttpRequest.newBuilder(URI.create(endpoint.replaceAll("/+$", "") + "/api/heartbeat"))
-                .timeout(Duration.ofSeconds(10)).header("Content-Type", "application/json")
-                .header("Authorization", "Bearer " + token)
-                .POST(HttpRequest.BodyPublishers.ofString(body)).build();
-            http.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-                .thenAccept(response -> {
-                    if (response.statusCode() < 200 || response.statusCode() >= 300)
-                        getLogger().warning("Cloud-Verbindung antwortet mit HTTP " + response.statusCode());
-                }).exceptionally(error -> {
-                    getLogger().warning("Cloud-Verbindung fehlgeschlagen: " + error.getMessage());
-                    return null;
-                });
-        } catch (IllegalArgumentException ex) {
-            getLogger().warning("Ungültige Worker-URL in config.yml.");
-        }
-    }
-
-    private String jsonEscape(String value) {
-        return value.replace("\\", "\\\\").replace("\"", "\\\"")
-            .replace("\n", "\\n").replace("\r", "\\r");
-    }
-
     private void saveData() {
         try { data.save(dataFile); }
         catch (IOException ex) { getLogger().severe("Farmdaten konnten nicht gespeichert werden: " + ex.getMessage()); }
