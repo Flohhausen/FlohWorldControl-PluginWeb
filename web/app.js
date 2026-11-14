@@ -15,7 +15,25 @@ const demo={
   teleports:[{id:"lager",name:"Lager",base:"hauptbase",world:"Survival",description:"Optional mit Hauptbase verknüpft"},{id:"spawn",name:"Spawn",base:null,world:"Survival",description:"Unabhängiger Teleportpunkt"}]
 };
 let data=demo;
-try{const saved=JSON.parse(localStorage.getItem("fwc-demo-data")||"null");if(saved)data={...demo,...saved};}catch{}
+try{
+ const saved=JSON.parse(localStorage.getItem("fwc-demo-data")||"null");
+ if(saved){
+  data={...demo,...saved,
+   bases:Array.isArray(saved.bases)?saved.bases:demo.bases,
+   farms:Array.isArray(saved.farms)?saved.farms:demo.farms,
+   switches:Array.isArray(saved.switches)?saved.switches:demo.switches,
+   items:Array.isArray(saved.items)?saved.items:demo.items,
+   teleports:Array.isArray(saved.teleports)?saved.teleports:demo.teleports
+  };
+  for(const list of ["farms","switches","items","teleports"]) data[list].forEach(entry=>{
+   if(entry.base && !data.bases.some(base=>base.id===entry.base)){
+    const matched=data.bases.find(base=>base.name===entry.base);
+    if(matched)entry.base=matched.id;
+    else entry.base=null;
+   }
+  });
+ }
+}catch{}
 const save=()=>{try{localStorage.setItem("fwc-demo-data",JSON.stringify(data));}catch{}};
 const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const slug=v=>v.toLowerCase().trim().replace(/[^a-z0-9äöüß]+/g,"-").replace(/^-|-$/g,"");
