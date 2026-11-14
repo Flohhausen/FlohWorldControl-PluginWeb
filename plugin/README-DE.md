@@ -16,7 +16,7 @@ Die BAT verwendet zuerst Gradle aus dem PATH und danach den bei Flohhausen
 bekannten lokalen Pfad `C:\Gradle\gradle-8.14.6-bin\gradle-8.14.6\bin\gradle.bat`.
 Falls dein Gradle woanders liegt, Gradle zum PATH hinzufuegen.
 
-## Auf Paper installieren
+## Dashboard und echte Daten\nDas Dashboard startet ohne Demo-Eintraege. Die Cloudflare-Verbindung liefert derzeit den Serverstatus, Spielerzahlen, Farm-Anzahl und Weltenzahl. Manuell im Dashboard angelegte Basen und Eintraege werden aktuell nur lokal im Browser gespeichert und noch nicht mit dem Server synchronisiert.\n\n## Auf Paper installieren
 1. Paper-Server mit `stop` sauber beenden.
 2. `FlohWorldControl-0.1.0.jar` in den Serverordner `plugins\` kopieren.
 3. Server starten.
