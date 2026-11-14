@@ -13,7 +13,7 @@ const slug=s=>s.toLowerCase().trim().replace(/[^a-z0-9äöüß]+/g,"-").replace(
 const route=()=>{const p=location.hash.replace(/^#/,"").split("/");return {section:p[0]||"overview",id:p[1]||null}};
 const titleMap={overview:"Übersicht",farms:"Farmen",bases:"Basen",worlds:"Welten",storage:"Kistensuche",teleport:"Teleport",statistics:"Statistiken"};
 function closeMenu(){$("#sidebar").classList.remove("open");$("#sidebarBackdrop").classList.remove("show");$("#menuButton").setAttribute("aria-expanded","false")}
-function menu(){const open=$("#sidebar").classList.toggle("open");$("#sidebarBackdrop").classList.toggle("show",open);$("#menuButton").setAttribute("aria-expanded",String(open))}
+function menu(){if(window.innerWidth<=760){const open=$("#sidebar").classList.toggle("open");$("#sidebarBackdrop").classList.toggle("show",open);$("#menuButton").setAttribute("aria-expanded",String(open))}else{const hidden=$("#sidebar").classList.toggle("collapsed");$(".main-area").classList.toggle("expanded",hidden);$("#menuButton").setAttribute("aria-expanded",String(!hidden))}}
 $("#menuButton").addEventListener("click",menu);$("#sidebarBackdrop").addEventListener("click",closeMenu);
 function sideSubnav(section,id){const box=$("#sidebarSubnav");if(!["farms","bases","worlds"].includes(section)){box.classList.remove("visible");box.innerHTML="";return}
 const items=data[section];const label=section==="farms"?"Erstellte Farmen":section==="bases"?"Erstellte Basen":"Erstellte Welten";
