@@ -3,43 +3,43 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#0c1017">
+  <meta name="theme-color" content="#090d14">
+  <meta name="description" content="FlohWorldControl – Minecraft Server Control Center">
   <title>FlohWorldControl</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
+  <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
   <div class="app-shell">
     <aside class="sidebar" id="sidebar">
-      <div class="brand">
-        <span class="mark">F</span>
-        <div><b>FlohWorld</b><small>CONTROL CENTER</small></div>
-      </div>
+      <a class="brand" href="#overview"><span class="mark">F</span><span><b>FlohWorld</b><small>CONTROL CENTER</small></span></a>
       <nav class="main-nav" aria-label="Hauptnavigation">
         <a href="#overview" data-route="overview"><span>◈</span> Übersicht</a>
         <a href="#farms" data-route="farms"><span>⚙</span> Farmen</a>
         <a href="#bases" data-route="bases"><span>▦</span> Basen</a>
-        <a href="#worlds" data-route="worlds"><span>🌍</span> Welten</a>
-        <a href="#storage" data-route="storage"><span>▣</span> Kistensuche</a>
+        <a href="#worlds" data-route="worlds"><span>◎</span> Welten</a>
+        <a href="#switches" data-route="switches"><span>⇄</span> Weichen</a>
         <a href="#teleport" data-route="teleport"><span>⌖</span> Teleport</a>
-        <a href="#statistics" data-route="statistics"><span>⌁</span> Statistiken</a>
-        <a href="#plugin" data-route="plugin"><span>⬇</span> Plugin herunterladen</a>
+        <a href="#statistics" data-route="statistics"><span>⌁</span> Item-Statistik</a>
+        <a href="#plugin" data-route="plugin"><span>⬇</span> Plugin</a>
       </nav>
       <div class="sidebar-subnav" id="sidebarSubnav"></div>
-      <div class="connection"><i></i><div><b>Server-Verbindung</b><small>Demo-Modus · nicht verbunden</small></div></div>
+      <div class="connection"><i></i><div><b>Server-Verbindung</b><small>Vorschau · noch nicht verbunden</small></div></div>
     </aside>
-
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
     <div class="main-area">
       <header class="topbar">
         <button class="menu-button" id="menuButton" aria-label="Menü öffnen" aria-expanded="false">☰</button>
         <div class="page-heading"><p class="eyebrow">MINECRAFT WORLD MANAGEMENT</p><h1 id="pageTitle">Übersicht</h1></div>
-        <div class="profile"><span class="profile-mark">F</span> Floh</div>
+        <div class="profile"><span class="profile-mark">F</span><span>Control Panel</span></div>
       </header>
       <main id="pageContent"></main>
-      <footer>FlohWorldControl · sichere Server-Verbindung folgt in Phase 2</footer>
+      <footer>FlohWorldControl <span>•</span> gebaut für deine Minecraft-Welt</footer>
     </div>
   </div>
-  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
   <script src="app.js"></script>
 </body>
 </html>
