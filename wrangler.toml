@@ -1,0 +1,6 @@
+name = "flohworldcontrol"
+compatibility_date = "2026-11-14"
+
+[assets]
+directory = "./web"
+binding = "ASSETS"
