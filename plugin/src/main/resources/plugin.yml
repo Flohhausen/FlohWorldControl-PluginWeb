@@ -1,0 +1,14 @@
+name: FlohWorldControl
+version: 0.1.0
+main: de.flohhausen.worldcontrol.FlohWorldControlPlugin
+api-version: '1.21'
+author: Flohhausen
+description: Verwaltung von Basen und automatisierten Farmen.
+commands:
+  base:
+    description: Verwaltet Basen und Farmen.
+    usage: /base farm <create|trigger|output|interval|pulse|enable|disable|list>
+permissions:
+  flohworldcontrol.admin:
+    description: Darf FlohWorldControl verwalten.
+    default: op
