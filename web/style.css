@@ -33,3 +33,13 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;opa
 @media(max-width:560px){.manage-row{align-items:flex-start;flex-direction:column}.manage-actions{justify-content:flex-start}.monitor-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:420px){.item-grid{grid-template-columns:1fr}.profile span:last-child{display:none}.stats{grid-template-columns:1fr 1fr}.hero h2{font-size:25px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+
+
+/* Einheitliches Link-Design – auch für Links ohne eigene CSS-Klasse */
+a{color:#75eaff;text-decoration:none;text-underline-offset:4px;transition:color .18s ease,text-shadow .18s ease,border-color .18s ease}
+a:hover{color:#c8fbff;text-shadow:0 0 12px #39e7ff55}
+a:focus-visible,button:focus-visible{outline:2px solid #39e7ff;outline-offset:3px}
+.main-area a:not(.button):not(.base-card):not(.feature-card){color:#72e8ff;text-decoration:underline;text-decoration-color:#2d8299;text-decoration-thickness:1px}
+.main-area a:not(.button):not(.base-card):not(.feature-card):hover{color:#d4fbff;text-decoration-color:#8cf3ff;text-shadow:0 0 13px #39e7ff55}
+.main-area a.button,.main-area a.base-card,.main-area a.feature-card{text-decoration:none}
+.sidebar a{text-decoration:none}
