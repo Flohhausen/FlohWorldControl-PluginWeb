@@ -37,3 +37,46 @@ function bind(){ $("#addBase")?.addEventListener("click",addBase);$("#treeAddBas
 function render(){const r=route(),section=titles[r.section]?r.section:"overview";$("#pageTitle").textContent=section==="bases"&&r.id?(data.bases.find(b=>b.id===r.id)?.name||"Base"):titles[section];$$(".main-nav a").forEach(a=>a.classList.toggle("active",a.dataset.route===section));baseTree();const html=section==="overview"?overview():section==="bases"?(r.id?baseDetail(r.id,r.category):basesPage()):section==="teleport"?teleportPage():pluginPage();const host=$("#pageContent");host.classList.remove("page-enter");host.innerHTML=html;requestAnimationFrame(()=>host.classList.add("page-enter"));bind();closeMenu();}
 function init(){$("#menuButton").addEventListener("click",menu);$("#sidebarBackdrop").addEventListener("click",closeMenu);$$(".main-nav a").forEach(a=>a.addEventListener("click",closeMenu));addEventListener("hashchange",render);if(!location.hash)location.hash="#overview";render();}
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init);else init();
+
+
+// PWA-Installation: Android/Chromium direkt, iOS mit Safari-Anleitung.
+let pendingInstallPrompt=null;
+function setupPwaInstall(){
+  const button=document.querySelector("#installButton");
+  if(!button)return;
+  const isIos=/iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isStandalone=window.matchMedia("(display-mode: standalone)").matches||navigator.standalone===true;
+  if(isStandalone){button.hidden=true;return;}
+  if(isIos){
+    button.hidden=false;
+    button.textContent="＋ Zum Home-Bildschirm";
+    button.addEventListener("click",()=>{
+      alert("FlohWorldControl installieren:\n\n1. Öffne diese Website in Safari.\n2. Tippe unten auf „Teilen“ (Quadrat mit Pfeil).\n3. Wähle „Zum Home-Bildschirm“.\n4. Tippe auf „Hinzufügen“.\n\nFalls die Option fehlt, scrolle im Teilen-Menü nach unten.");
+    });
+    return;
+  }
+  window.addEventListener("beforeinstallprompt",event=>{
+    event.preventDefault();
+    pendingInstallPrompt=event;
+    button.hidden=false;
+  });
+  window.addEventListener("appinstalled",()=>{
+    pendingInstallPrompt=null;
+    button.hidden=true;
+    button.textContent="App installiert";
+  });
+  button.addEventListener("click",async()=>{
+    if(!pendingInstallPrompt){
+      alert("Wenn keine Installationsmeldung erscheint, öffne das Browser-Menü und wähle „App installieren“ oder „Zum Startbildschirm hinzufügen“.");
+      return;
+    }
+    pendingInstallPrompt.prompt();
+    await pendingInstallPrompt.userChoice;
+    pendingInstallPrompt=null;
+    button.hidden=true;
+  });
+}
+if("serviceWorker" in navigator && location.protocol!=="file:"){
+  window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(error=>console.warn("PWA-Offlinecache konnte nicht gestartet werden:",error)));
+}
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",setupPwaInstall);else setupPwaInstall();
