@@ -1,0 +1,16 @@
+{
+  "id": "./",
+  "name": "FlohWorldControl",
+  "short_name": "FlohWorld",
+  "description": "Minecraft World Control Center",
+  "lang": "de",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#070b12",
+  "theme_color": "#070b12",
+  "icons": [
+    {"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any"}
+  ]
+}
