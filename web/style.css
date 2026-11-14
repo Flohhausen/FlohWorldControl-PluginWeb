@@ -48,3 +48,13 @@ a:focus-visible,button:focus-visible{outline:2px solid #39e7ff;outline-offset:3p
 .install-button{white-space:nowrap;min-height:38px;padding:9px 12px;font-size:10px}
 .install-button[hidden]{display:none}
 @media(max-width:760px){.topbar{flex-wrap:wrap}.install-button{margin-left:auto}.profile{display:none}}
+
+/* Live-Server-Verbindung */
+.cloud-panel{margin-bottom:16px;border-color:#286078}
+.cloud-state{font-size:9px;padding:7px 10px;border-radius:20px;background:#2a2417;color:#ffc17c;border:1px solid #66502a;white-space:nowrap}
+.cloud-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.cloud-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px}
+.cloud-stats>div{background:#091522;border:1px solid #234057;border-radius:7px;padding:12px}
+.cloud-stats small{display:block;color:#8fa5ba;font-size:9px;letter-spacing:1px}
+.cloud-stats b{display:block;color:var(--cyan);font:700 20px Orbitron,sans-serif;margin-top:8px}
+@media(max-width:520px){.cloud-stats{grid-template-columns:1fr 1fr}.cloud-actions button{flex:1}}
