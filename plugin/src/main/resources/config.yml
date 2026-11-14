@@ -1,2 +1,8 @@
 default-interval-minutes: 10
 default-pulse-ticks: 4
+
+connection:
+  # Cloudflare Worker URL, ohne /api/heartbeat
+  worker-url: ""
+  # Geheimen Server-Token hier eintragen; niemals veröffentlichen
+  server-token: ""
