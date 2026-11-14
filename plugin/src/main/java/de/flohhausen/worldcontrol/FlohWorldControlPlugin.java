@@ -261,8 +261,8 @@ public final class FlohWorldControlPlugin extends JavaPlugin {
     }
 
     private String jsonEscape(String value) {
-        return value.replace("\\\\", "\\\\\\\\").replace("\\"", "\\\\\"")
-            .replace("\\n", "\\\\n").replace("\\r", "\\\\r");
+        return value.replace("\\", "\\\\").replace("\"", "\\\"")
+            .replace("\n", "\\n").replace("\r", "\\r");
     }
 
     private void saveData() {
